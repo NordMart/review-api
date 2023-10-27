@@ -8,7 +8,7 @@ metadata:
     pipelinesascode.tekton.dev/task: "[git-clone,
     https://raw.githubusercontent.com/stakater/tekton-catalog/main/stakater-fetch-pr-number/rendered/stakater-fetch-pr-number-0.0.32.yaml,
     https://raw.githubusercontent.com/stakater/tekton-catalog/main/stakater-create-git-tag/rendered/stakater-create-git-tag-0.0.7.yaml, 
-    https://raw.githubusercontent.com/stakater/tekton-catalog/main/stakater-create-environment/rendered/stakater-create-environment-0.0.4.yaml,
+    https://raw.githubusercontent.com/stakater/tekton-catalog/main/stakater-create-environment/rendered/stakater-create-environment-0.0.11.yaml,
     https://raw.githubusercontent.com/stakater/tekton-catalog/main/stakater-code-linting/rendered/stakater-code-linting-0.0.3.yaml,
     https://raw.githubusercontent.com/stakater/tekton-catalog/main/stakater-kube-linting/rendered/stakater-kube-linting-0.0.6.yaml,
     https://raw.githubusercontent.com/stakater/tekton-catalog/main/stakater-unit-test/rendered/stakater-unit-test-0.0.5.yaml,
@@ -98,7 +98,7 @@ spec:
           - create-git-tag
         taskRef:
           kind: Task
-          name: stakater-create-environment-0.0.4
+          name: stakater-create-environment-0.0.11
         params:
           - name: CREATE_ON_CLUSTER
             value: "true"
@@ -119,6 +119,8 @@ spec:
         workspaces:
           - name: output
             workspace: source
+          - name: repo-token
+            workspace: repo-token
 
       - name: code-linting
         runAfter:
@@ -365,3 +367,6 @@ spec:
     - name: cd-ssh-creds
       secret:
         secretName: cd-ssh-creds
+    - name: repo-token
+      secret:
+        secretName: git-pat-creds
