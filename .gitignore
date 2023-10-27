@@ -30,7 +30,7 @@ target/
 
 # Intellij
 .idea/
-stakater-nordmart-review.iml
+review.iml
 .project
 
 # Tilt

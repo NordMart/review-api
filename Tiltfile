@@ -1,5 +1,5 @@
 # VERY IMPORTANT NOTES:
-# 1. This Tiltfile is for a Java project and same Tiltfile can't be used for all sorts of application; some tweaks are required - this Tiltfile is being used for this Java based application: https://github.com/stakater-lab/stakater-nordmart-review
+# 1. This Tiltfile is for a Java project and same Tiltfile can't be used for all sorts of application; some tweaks are required - this Tiltfile is being used for this Java based application: https://github.com/stakater-lab/review
 # 2. The Dockerfile must have a specific structure for this Tiltfile to work - for reference look this Dockerfile
 
 # For more on Extensions, see: https://docs.tilt.dev/extensions.html

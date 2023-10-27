@@ -25,13 +25,13 @@ metadata:
 spec:
   params:
     - name: repo_url
-      value: "git@github.com:DESTINATION_ORG/stakater-nordmart-review-api.git"
+      value: "git@github.com:DESTINATION_ORG/review-api.git"
     - name: git_revision
       value: {{revision}}
     - name: repo_path
       value: {{repo_name}}
     - name: image_registry
-      value: nexus-docker-stakater-nexus.ROUTE_SUBDOMAIN/stakater-nordmart-review-api
+      value: nexus-docker-stakater-nexus.ROUTE_SUBDOMAIN/review-api
     - name: helm_registry
       value: >-
         https://nexus-helm-stakater-nexus.ROUTE_SUBDOMAIN/repository/helm-charts/
