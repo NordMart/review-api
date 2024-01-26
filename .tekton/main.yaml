@@ -14,7 +14,7 @@ metadata:
     https://raw.githubusercontent.com/stakater-tekton-catalog/buildah/0.0.29/task/stakater-buildah/stakater-buildah.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/trivy-scan/0.0.3/task/stakater-trivy-scan/stakater-trivy-scan.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/rox-image-scan/0.0.4/task/stakater-rox-image-scan/stakater-rox-image-scan.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/rox-deployment-check/blob/0.0.4/task/stakater-rox-deployment-check/stakater-rox-deployment-check.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/rox-deployment-check/0.0.4/task/stakater-rox-deployment-check/stakater-rox-deployment-check.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/rox-image-check/0.0.7/task/stakater-rox-image-check/stakater-rox-image-check.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/checkov-scan/0.0.4/task/stakater-checkov-scan/stakater-checkov-scan.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/github-update-cd-repo/0.0.12/task/stakater-github-update-cd-repo/stakater-github-update-cd-repo.yaml,
