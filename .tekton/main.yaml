@@ -6,20 +6,20 @@ metadata:
     pipelinesascode.tekton.dev/on-event: "[push]"
     pipelinesascode.tekton.dev/on-target-branch: "main"
     pipelinesascode.tekton.dev/task: "[git-clone, 
-    https://raw.githubusercontent.com/stakater/tekton-catalog/main/stakater-create-git-tag/rendered/stakater-create-git-tag-0.0.7.yaml, 
-    https://raw.githubusercontent.com/stakater/tekton-catalog/main/stakater-code-linting/rendered/stakater-code-linting-0.0.3.yaml, 
-    https://raw.githubusercontent.com/stakater/tekton-catalog/main/stakater-kube-linting/rendered/stakater-kube-linting-0.0.4.yaml, 
-    https://raw.githubusercontent.com/stakater/tekton-catalog/main/stakater-unit-test/rendered/stakater-unit-test-0.0.5.yaml, 
-    https://raw.githubusercontent.com/stakater/tekton-catalog/main/stakater-sonarqube-scan/rendered/stakater-sonarqube-scan-0.0.5.yaml, 
-    https://raw.githubusercontent.com/stakater/tekton-catalog/main/stakater-buildah/rendered/stakater-buildah-0.0.18.yaml, 
-    https://raw.githubusercontent.com/stakater/tekton-catalog/main/stakater-trivy-scan/rendered/stakater-trivy-scan-0.0.3.yaml,
-    https://raw.githubusercontent.com/stakater/tekton-catalog/main/stakater-rox-image-scan/rendered/stakater-rox-image-scan-0.0.4.yaml, 
-    https://raw.githubusercontent.com/stakater/tekton-catalog/main/stakater-rox-deployment-check/rendered/stakater-rox-deployment-check-0.0.4.yaml, 
-    https://raw.githubusercontent.com/stakater/tekton-catalog/main/stakater-rox-image-check/rendered/stakater-rox-image-check-0.0.4.yaml, 
-    https://raw.githubusercontent.com/stakater/tekton-catalog/main/stakater-checkov-scan/rendered/stakater-checkov-scan-0.0.3.yaml,
-    https://raw.githubusercontent.com/stakater/tekton-catalog/main/stakater-github-update-cd-repo/rendered/stakater-github-update-cd-repo-0.0.7.yaml, 
-    https://raw.githubusercontent.com/stakater/tekton-catalog/main/stakater-push-main-tag/rendered/stakater-push-main-tag-0.0.6.yaml,
-    https://raw.githubusercontent.com/stakater/tekton-catalog/main/stakater-helm-push/rendered/stakater-helm-push-0.0.12.yaml]"
+    https://raw.githubusercontent.com/stakater-tekton-catalog/create-git-tag/0.0.12/task/stakater-create-git-tag/stakater-create-git-tag.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/code-linting/0.0.4/task/stakater-code-linting/stakater-code-linting.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/kube-linting/0.0.7/task/stakater-kube-linting/stakater-kube-linting.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/unit-test/0.0.6/task/stakater-unit-test/stakater-unit-test.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/sonarqube-scan/0.0.12/task/stakater-sonarqube-scan/stakater-sonarqube-scan.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/buildah/0.0.29/task/stakater-buildah/stakater-buildah.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/trivy-scan/0.0.3/task/stakater-trivy-scan/stakater-trivy-scan.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/rox-image-scan/0.0.4/task/stakater-rox-image-scan/stakater-rox-image-scan.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/rox-deployment-check/blob/0.0.4/task/stakater-rox-deployment-check/stakater-rox-deployment-check.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/rox-image-check/0.0.7/task/stakater-rox-image-check/stakater-rox-image-check.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/checkov-scan/0.0.4/task/stakater-checkov-scan/stakater-checkov-scan.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/github-update-cd-repo/0.0.12/task/stakater-github-update-cd-repo/stakater-github-update-cd-repo.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/push-main-tag/0.0.10/task/stakater-push-main-tag/stakater-push-main-tag.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/helm-push/0.0.17/task/stakater-helm-push/stakater-helm-push.yaml]"
     pipelinesascode.tekton.dev/max-keep-runs: "2"
 
 spec:
