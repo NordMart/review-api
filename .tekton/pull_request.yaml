@@ -80,7 +80,7 @@ spec:
         runAfter:
           - fetch-repository
         taskRef:
-          name: stakater-create-git-tag-0.0.7
+          name: stakater-create-git-tag
           kind: Task
         params:
           - name: PR_NUMBER
@@ -98,7 +98,7 @@ spec:
           - create-git-tag
         taskRef:
           kind: Task
-          name: stakater-create-environment-0.0.15
+          name: stakater-create-environment
         params:
           - name: CREATE_ON_CLUSTER
             value: "true"
@@ -126,7 +126,7 @@ spec:
         runAfter:
           - stakater-create-environment
         taskRef:
-          name: stakater-code-linting-0.0.3
+          name: stakater-code-linting
           kind: Task
         workspaces:
           - name: source
@@ -136,7 +136,7 @@ spec:
         runAfter:
           - stakater-create-environment
         taskRef:
-          name: stakater-kube-linting-0.0.6
+          name: stakater-kube-linting
           kind: Task
         params:
           - name: FILE
@@ -154,7 +154,7 @@ spec:
           - code-linting
           - kube-linting
         taskRef:
-          name: stakater-unit-test-0.0.5
+          name: stakater-unit-test
           kind: Task
         workspaces:
           - name: source
@@ -164,7 +164,7 @@ spec:
         runAfter:
           - unit-test
         taskRef:
-          name: stakater-sonarqube-scan-0.0.5
+          name: stakater-sonarqube-scan
           kind: Task
         params:
           - name: SONAR_HOST_URL
@@ -180,7 +180,7 @@ spec:
         runAfter:
           - unit-test
         taskRef:
-          name: stakater-buildah-0.0.18
+          name: stakater-buildah
           kind: Task
         params:
           - name: IMAGE
@@ -204,7 +204,7 @@ spec:
           - buildah
           - sonarqube-scan
         taskRef:
-          name: stakater-trivy-scan-0.0.3
+          name: stakater-trivy-scan
           kind: Task
         params:
           - name: IMAGE
@@ -218,7 +218,7 @@ spec:
           - buildah
           - sonarqube-scan
         taskRef:
-          name: stakater-rox-image-scan-0.0.4
+          name: stakater-rox-image-scan
           kind: Task
         params:
         - name: IMAGE
@@ -239,7 +239,7 @@ spec:
           - buildah
           - sonarqube-scan
         taskRef:
-          name: stakater-rox-image-check-0.0.7
+          name: stakater-rox-image-check
           kind: Task
         params:
           - name: IMAGE
@@ -256,7 +256,7 @@ spec:
           - buildah
           - sonarqube-scan
         taskRef:
-          name: stakater-rox-deployment-check-0.0.4
+          name: stakater-rox-deployment-check
           kind: Task
         params:
           - name: ROX_API_TOKEN
@@ -276,7 +276,7 @@ spec:
           - buildah
           - sonarqube-scan
         taskRef:
-          name: stakater-checkov-scan-0.0.3
+          name: stakater-checkov-scan
           kind: Task
         workspaces:
           - name: source
@@ -290,7 +290,7 @@ spec:
           - rox-image-check
           - checkov-scan
         taskRef:
-          name: stakater-helm-push-0.0.12
+          name: stakater-helm-push
           kind: Task
         params:
           - name: PR_NUMBER
@@ -311,7 +311,7 @@ spec:
           - helm-push
         taskRef:
           kind: Task
-          name: stakater-github-update-cd-repo-0.0.7
+          name: stakater-github-update-cd-repo
         params:
           - name: IMAGE_TAG
             value: $(tasks.create-git-tag.results.GIT_TAG)
@@ -342,7 +342,7 @@ spec:
           - update-cd-repo
         taskRef:
           kind: Task
-          name: stakater-validate-environment-0.0.4
+          name: stakater-validate-environment
         params:
           - name: TIMEOUT
             value: "300"
