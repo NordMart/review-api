@@ -8,7 +8,7 @@ metadata:
     pipelinesascode.tekton.dev/task: "[git-clone,
     https://raw.githubusercontent.com/stakater-tekton-catalog/create-git-tag/0.0.12/task/stakater-create-git-tag/stakater-create-git-tag.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/create-environment/0.0.16/task/stakater-create-environment/stakater-create-environment.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/code-linting/0.0.4/task/stakater-code-linting/stakater-code-linting.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/code-linting-mvn/0.0.4/task/stakater-code-linting/stakater-code-linting.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/kube-linting/0.0.7/task/stakater-kube-linting/stakater-kube-linting.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/unit-test/0.0.6/task/stakater-unit-test/stakater-unit-test.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/sonarqube-scan/0.0.12/task/stakater-sonarqube-scan/stakater-sonarqube-scan.yaml,
