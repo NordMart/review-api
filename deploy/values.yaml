@@ -143,9 +143,6 @@ application:
         dataFrom:
           key: review-api/dev/mongodb-creds
 
-      docker-reg-creds:
-        dataFrom:
-          key: docker-reg-creds
 
 #####################
 # MongoDB dependency
