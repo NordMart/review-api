@@ -21,10 +21,9 @@ jobs:
           git config --global user.name "stakater-user"
 
       - name: Sync Changes to Another Repo
-        uses: actions/github-script@v4
-        with:
-          github-token: ${{ secrets.NORDMARTTESTZONE_GITHUB_TOKEN }}
-          run: |
+        env:
+          GH_TOKEN: ${{ secrets.NORDMARTTESTZONE_GITHUB_TOKEN }}
+        run: |
             IFS='/' read -ra REPO_INFO <<< "$GITHUB_REPOSITORY"
             SOURCE_OWNER="${REPO_INFO[0]}"
             SOURCE_REPO="${REPO_INFO[1]}"
