@@ -1,0 +1,73 @@
+name: Sync Changes to Another Repo
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.tekton/git_clone.yaml'
+
+jobs:
+  sync-changes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Git
+        run: |
+          git config --global user.email "stakater@gmail.com"
+          git config --global user.name "stakater-user"
+
+      - name: Sync Changes to Another Repo
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.NORDMARTTESTZONE_GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const path = '.tekton/git_clone.yaml';
+            const newContent = fs.readFileSync(path, 'utf-8');
+            
+            const octokit = context.github;
+            const owner = 'NordMartTestZone';
+            const repo = 'review-api';
+            const branch = 'main'; // Change this to the target branch in the other repository
+            const baseBranch = 'main'; // Change this to the branch you want to create a pull request against
+            
+            // Get the latest commit SHA of the target branch
+            const { data: baseBranchInfo } = await octokit.repos.getBranch({
+            owner,
+            repo,
+            branch: baseBranch
+            });
+
+             // Create a new branch for the changes
+             const branchName = `sync-changes-${Date.now()}`;
+             await octokit.git.createRef({
+             owner,
+             repo,
+             ref: `refs/heads/${branchName}`,
+             sha: baseBranchInfo.commit.sha
+             });
+         
+             // Update the file in the new branch
+             const updateFile = await octokit.repos.createOrUpdateFileContents({
+             owner,
+             repo,
+             path,
+             message: 'Sync changes',
+             content: Buffer.from(newContent).toString('base64'),
+             branch: branchName
+             });
+         
+             // Create a pull request
+             const pr = await octokit.pulls.create({
+             owner,
+             repo,
+             title: 'Sync changes',
+             base: baseBranch,
+             head: branchName
+             });
+         
+             console.log(`Pull request created: ${pr.data.html_url}`);
