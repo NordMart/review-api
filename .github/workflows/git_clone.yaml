@@ -38,7 +38,7 @@ jobs:
             git checkout -b "$BRANCH_NAME"
             
             # Copy the changes to the target repository
-            cp .tekton/git_clone.yaml "path/to/target/repo/.tekton/git_clone.yaml"
+            cp .tekton/git_clone.yaml ".tekton/git_clone.yaml"
             
             # Commit and push changes to the target repository
             git add .
