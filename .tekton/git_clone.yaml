@@ -13,7 +13,6 @@ spec:
       value: {{body.pull_request.head.repo.ssh_url}}
     - name: git_revision
       value: {{revision}}
-
   pipelineSpec:
     params:
       - name: repo_url
