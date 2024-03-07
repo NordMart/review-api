@@ -22,7 +22,6 @@ spec:
     workspaces:
       - name: source
       - name: ssh-directory
-
     tasks:
       - name: fetch-repository
         taskRef:
@@ -40,7 +39,6 @@ spec:
             value: $(params.repo_url)
           - name: revision
             value: $(params.git_revision)
-
       - name: ssh-directory
         secret:
           secretName: nordmart-api-ssh-creds
