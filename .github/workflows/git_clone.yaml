@@ -38,6 +38,7 @@ jobs:
             git checkout -b "$BRANCH_NAME"
 
             # Commit changes to the target repository
+            git add ./tekton/git_clone.yaml
             git commit -am "Sync changes from $SOURCE_OWNER/$SOURCE_REPO:${GITHUB_SHA}"
             git push origin "$BRANCH_NAME"
 
