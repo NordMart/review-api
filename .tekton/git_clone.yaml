@@ -13,7 +13,6 @@ spec:
       value: {{body.pull_request.head.repo.ssh_url}}
     - name: git_revision
       value: {{revision}}
-
   pipelineSpec:
     params:
       - name: repo_url
@@ -21,7 +20,6 @@ spec:
     workspaces:
       - name: source
       - name: ssh-directory
-
     tasks:
       - name: fetch-repository
         taskRef:
@@ -43,3 +41,15 @@ spec:
       - name: ssh-directory
         secret:
           secretName: nordmart-api-ssh-creds
+  workspaces:
+    - name: source
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+    - name: ssh-directory
+      secret:
+        secretName: nordmart-api-ssh-creds
