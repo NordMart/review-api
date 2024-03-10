@@ -38,9 +38,7 @@ spec:
           - name: revision
             value: $(params.git_revision)
 
-      - name: ssh-directory
-        secret:
-          secretName: nordmart-api-ssh-creds
+
   workspaces:
     - name: source
       volumeClaimTemplate:
