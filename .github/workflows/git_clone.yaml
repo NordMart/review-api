@@ -1,51 +1,50 @@
-name: Sync Changes to Another Repo
+name: Wait for pipelines
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
     branches:
       - main
     paths:
       - '.tekton/git_clone.yaml'
 
 jobs:
-  sync-changes:
+  wait_for_pipelines:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0 
-
-      - name: Set up Git
+      - name: Check if all other PR pipelines succeeded
+        id: check_pipelines
         run: |
-          git config --global user.email "stakater@gmail.com"
-          git config --global user.name "stakater-user"
+          TOKEN=$(echo ${{ secrets.GITHUB_TOKEN }})
+          API_URL="https://api.github.com/repos/${{ github.repository }}/actions/runs"
+          
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
 
-      - name: Sync Changes to Another Repo
-        env:
-          GH_TOKEN: ${{ secrets.NORDMARTTESTZONE_GITHUB_TOKEN }}
-        run: |
-            IFS='/' read -ra REPO_INFO <<< "$GITHUB_REPOSITORY"
-            SOURCE_OWNER="${REPO_INFO[0]}"
-            SOURCE_REPO="${REPO_INFO[1]}"
-            
-            # Target Repository
-            TARGET_OWNER="NordMartTestZone"
-            TARGET_REPO="review-api"
-            TARGET_BRANCH="main" # Change this to the target branch in the other repository
-            
-            # Create a new branch for the changes in the target repository
-            BRANCH_NAME="sync-changes-${GITHUB_RUN_NUMBER}"
-            git checkout -b "$BRANCH_NAME"
+          while true; do
+            # Get all workflow runs for the current PR
+            RUNS=$(curl -s -X GET -G \
+              -H "Authorization: Bearer $TOKEN" \
+              -H "Accept: application/vnd.github.v3+json" \
+              -d "event=push" \
+              -d "branch=${{ github.event.pull_request.head.ref }}" \
+              "$API_URL")
 
-            cat .tekton/git_clone.yaml
-            # Commit changes to the target repository
-            git status
-            git add .
+            # Check if any other run has failed
+            if echo "$RUNS" | jq -e '.workflow_runs[] | select(.id != '$GITHUB_RUN_ID' and .conclusion == "failure")' > /dev/null; then
+              echo "One of the other PR pipelines failed. Failing this workflow."
+              exit 1
+            fi
 
-            git commit -am "Sync changes from $SOURCE_OWNER/$SOURCE_REPO:${GITHUB_SHA}"
-            git push origin "$BRANCH_NAME"
-
-            # Create a pull request using gh CLI
-            gh pr create --base "$TARGET_BRANCH" --head "$TARGET_OWNER:$BRANCH_NAME" --title "Sync changes from $SOURCE_OWNER/$SOURCE_REPO" --body "Sync changes from $SOURCE_OWNER/$SOURCE_REPO:${GITHUB_SHA}"
+            # Check if all runs are successful
+            if ! echo "$RUNS" | jq -e '.workflow_runs[] | select(.id != '$GITHUB_RUN_ID' and .conclusion != "success")' > /dev/null; then
+              echo "All other PR pipelines succeeded. Proceeding with the current workflow."
+              break
+            else
+              echo "Not all other PR pipelines succeeded. Waiting..."
+              sleep 60  # Adjust the sleep duration based on your needs
+              # You can add additional waiting logic if needed
+            fi
+          done
