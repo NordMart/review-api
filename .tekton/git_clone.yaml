@@ -38,7 +38,6 @@ spec:
           - name: revision
             value: $(params.git_revision)
 
-
   workspaces:
     - name: source
       volumeClaimTemplate:
