@@ -27,6 +27,7 @@ jobs:
 
     - name: Update Changelog
       run: |
+        cd saap-docs
         echo "- Pipelines updated" >> CHANGELOG.md
         cd ..
 
