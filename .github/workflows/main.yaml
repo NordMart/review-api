@@ -1,0 +1,56 @@
+name: Update Changelog and Open PR
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.tekton/**'
+
+jobs:
+  update-changelog:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout 
+      uses: actions/checkout@v2
+
+    - name: Set up Git
+      run: |
+        git config user.email "stakater@github.com"
+        git config user.name "Stakater-Bot"
+
+    - name: Clone saap-docs
+      run: |
+        git clone https://github.com/stakater/saap-docs
+        cd saap-docs
+
+    - name: Update Changelog
+      run: |
+        echo "- Pipelines updated" >> CHANGELOG.md
+
+    - name: Commit and Push
+      run: |
+        git add CHANGELOG.md
+        git commit -m "Update changelog"
+        git push origin main
+
+  open-pr:
+    needs: update-changelog
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout saap-docs
+      uses: actions/checkout@v2
+      with:
+        repository: stakater/saap-docs
+        ref: main
+
+    - name: Create PR
+      uses: peter-evans/create-pull-request@v3
+      with:
+        token: ${{ secrets.STAKATER_GITHUB_TOKEN }}
+        branch: update-changelog
+        title: "Update Changelog"
+        body: "This pull request updates the changelog and is opened by NOrdmart/review-api."
+        labels: "changelog"
