@@ -34,8 +34,8 @@ jobs:
     - name: Commit and Push
       run: |
         cd saap-docs
-        git config user.email "stakater@github.com"
-        git config user.name "Stakater-Bot"
+        git config --global user.email "stakater@gmail.com"
+        git config --global user.name "stakater-user"
         git add CHANGELOG.md
         git commit -m "Update changelog"
         git push origin main
