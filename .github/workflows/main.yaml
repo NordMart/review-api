@@ -28,9 +28,11 @@ jobs:
     - name: Update Changelog
       run: |
         echo "- Pipelines updated" >> CHANGELOG.md
+        cd ..
 
     - name: Commit and Push
       run: |
+        cd saap-docs
         git add CHANGELOG.md
         git commit -m "Update changelog"
         git push origin main
