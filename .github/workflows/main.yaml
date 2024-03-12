@@ -1,62 +1,65 @@
- name: Update Changelog and Open PR
+on:
+  push:
+    branches:
+      - main
+    tags-ignore:
+      - "**"
 
- on:
-   push:
-     branches:
-       - main
-     # paths:
-     #   - '.tekton/**'
+name: on-commit-to-main
 
- jobs:
-   update-changelog:
-     runs-on: ubuntu-latest
+jobs:
+  send-pull-requests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
+        with:
+          fetch-depth: 0 # Checkout everything to get access to the tags
+          ref: ${{github.event.pull_request.head.ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-     steps:
-     - name: Checkout
-       uses: actions/checkout@v2
+      - name: Send pull-request
+        run: |
+          LATEST_TAG=$(git describe --tags --always --abbrev=0)
+          REPOSITORY="stakater/saap-docs
+          FOLDER="bin/$REPOSITORY"
+          BRANCH_NAME="pipelines-to-$LATEST_TAG"
 
-     - name: Set up Git
-       run: |
-         git config user.email "stakater@github.com"
-         git config user.name "Stakater-Bot"
+          # Clone the remote repository and change working directory to the
+          # folder it was cloned to.
+          git clone \
+            --depth=1 \
+            --branch=main \
+            https://stakater-nordmart-bot:${{ secrets.STAKATER_GITHUB_TOKEN }}@github.com/$REPOSITORY \
+            $FOLDER
 
-     - name: Clone saap-docs
-       run: |
-         git clone https://github.com/stakater/saap-docs
-         cd saap-docs
+          cd $FOLDER
 
-     - name: Update Changelog
-       run: |
-         cd saap-docs
-         echo "- Pipelines updated" >> CHANGELOG.md
-         cd ..
+          # Setup the committers identity.
+          git config --global user.email "stakater@gmail.com"
+          git config --global user.name "stakater-user"
 
-     - name: Commit and Push
-       run: |
-         cd saap-docs
-         git config --unset-all http.https://github.com/.extraheader
-         git config --global user.email "stakater@gmail.com"
-         git config --global user.name "stakater-user"
-         git add CHANGELOG.md
-         git commit -m "Update changelog"
-         git push origin main
+          # Create a new feature branch for the changes.
+          git checkout -b $BRANCH_NAME
 
-   open-pr:
-     needs: update-changelog
-     runs-on: ubuntu-latest
+          # Update Changelog
+          echo "- Pipelines updated" >> CHANGELOG.md
 
-     steps:
-     - name: Checkout saap-docs
-       uses: actions/checkout@v2
-       with:
-         repository: stakater/saap-docs
-         ref: main
+          # Commit the changes and push the feature branch to origin
+          git add .
+          git commit -m "Update pipeline yamls"
+          git push origin $BRANCH_NAME
 
-     - name: Create PR
-       uses: peter-evans/create-pull-request@v3
-       with:
-         token: ${{ secrets.STAKATER_GITHUB_TOKEN }}
-         branch: update-changelog
-         title: "Update Changelog"
-         body: "This pull request updates the changelog and is opened by NOrdmart/review-api."
-         labels: "changelog"
+          # Store the PAT in a file that can be accessed by the
+          # GitHub CLI.
+          echo "${{ secrets.STAKATER_GITHUB_TOKEN }}" > token.txt
+
+          # Authorize GitHub CLI for the current repository and
+          # create a pull-requests containing the updates.
+          gh auth login --with-token < token.txt
+          gh pr create \
+            --body "" \
+            --title "Update pipeline yamls" \
+            --head "$BRANCH_NAME" \
+            --base "main"
