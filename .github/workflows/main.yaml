@@ -67,3 +67,4 @@ jobs:
             --title "Update pipeline yamls" \
             --head "$BRANCH_NAME" \
             --base "main"
+
