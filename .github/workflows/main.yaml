@@ -22,7 +22,7 @@ jobs:
       - name: Send pull-request
         run: |
           LATEST_TAG=$(git describe --tags --always --abbrev=0)
-          REPOSITORY="stakater/saap-docs
+          REPOSITORY="stakater/saap-docs"
           FOLDER="bin/$REPOSITORY"
           BRANCH_NAME="pipelines-to-$LATEST_TAG"
 
