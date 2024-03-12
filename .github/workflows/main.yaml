@@ -42,7 +42,10 @@ jobs:
 
           # Create a new feature branch for the changes.
           git checkout -b $BRANCH_NAME
+          git config --global user.name
+          git config --global user.email
 
+          
           # Update Changelog
           echo "- Pipelines updated" >> CHANGELOG.md
 
