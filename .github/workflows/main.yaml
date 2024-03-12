@@ -42,8 +42,9 @@ jobs:
 
           # Create a new feature branch for the changes.
           git checkout -b $BRANCH_NAME
-          git config --global user.name
-          git config --global user.email
+          
+          git config user.name
+          git config user.email
 
           
           # Update Changelog
