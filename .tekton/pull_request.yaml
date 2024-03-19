@@ -310,14 +310,10 @@ spec:
             value: $(params.repo_path)
           - name: GIT_REVISION
             value: $(params.git_revision)
-          - name: NAMESPACE
-            value: arsenal-dev
           - name: ENVIRONMENT
             value: dev
           - name: HELM_REGISTRY
             value: 'NA'
-          - name: CD_REPO_URL
-            value: git@github.com:NordMartTestZone/apps-gitops-config.git
         workspaces:
           - name: source
             workspace: source
