@@ -535,8 +535,4 @@ mongodb:
   containerSecurityContext:
     enabled: false
 
-#####################
-# Grafana dashboard
-#####################
-grafanaDashboard:
-  enabled: true
+
