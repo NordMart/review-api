@@ -10,7 +10,7 @@ metadata:
     https://raw.githubusercontent.com/stakater-tekton-catalog/create-git-tag/0.0.12/task/stakater-create-git-tag/stakater-create-git-tag.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/create-environment/0.0.17/task/stakater-create-environment/stakater-create-environment.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/code-linting-mvn/0.0.4/task/stakater-code-linting/stakater-code-linting.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/kube-linting/0.0.9/task/stakater-kube-linting/stakater-kube-linting.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/kube-linting/0.0.10/task/stakater-kube-linting/stakater-kube-linting.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/unit-test/0.0.6/task/stakater-unit-test/stakater-unit-test.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/sonarqube-scan-java/0.0.1/task/stakater-sonarqube-scan-java/stakater-sonarqube-scan-java.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/buildah/0.0.37/task/stakater-buildah/stakater-buildah.yaml,
