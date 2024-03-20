@@ -75,7 +75,15 @@ jobs:
       - name: Merge PR if checks pass
         if: steps.pr_checks.outputs.checks == 'success'
         run: |
-          response=$(curl -s -X PUT -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls/${{ steps.pr_details.outputs.pr_number }}/merge")
+          response=$(curl -X PUT -s -o /dev/null -w "%{http_code}" \
+              -H "Authorization: token ${{ secrets.NORDMART_TOKEN }}" \
+              -H "Accept: application/vnd.github.v3+json" \
+              "https://api.github.com/repos/${{ github.repository }}/pulls/${{ steps.pr_details.outputs.pr_number }}/merge")
+          if [ $response -eq 200 ]; then
+          echo "Pull request merged successfully"
+          else
+          echo "Failed to merge pull request. HTTP status code: $response"
+          fi
           echo $response
           merged=$(echo $response | jq -r '.merged')
           echo "::set-output name=merged::${merged}"
