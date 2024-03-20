@@ -50,22 +50,10 @@ jobs:
             fi
           done
 
-  merge:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Auto Merge PR
-        run: |
-          # Install git
-          sudo apt-get update && sudo apt-get install git -y
-
-          # Fetch latest changes
-          git fetch origin ${GITHUB_HEAD_REF}
-
-          # Merge the pull request
-          git merge --no-ff FETCH_HEAD -m "Auto-merge pull request"
-
-          # Push the changes back to the repository
-          git push origin HEAD:${GITHUB_BASE_REF}
+      - name: Merge if checks pass
+        id: merge
+        uses: marocchino/auto-approve-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          approvals: 0
+          merge_method: merge
