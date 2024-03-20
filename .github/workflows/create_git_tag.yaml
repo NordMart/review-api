@@ -68,12 +68,12 @@ jobs:
           echo "::set-output name=checks::${checks}"
 
       - name: Merge PR if checks pass
-        if: steps.pr_checks.outputs.checks == "success"
+        if: steps.pr_checks.outputs.checks == 'success'
         run: |
           response=$(curl -s -X PUT -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls/${{ steps.pr_details.outputs.pr_number }}/merge")
           merged=$(echo $response | jq -r '.merged')
           echo "::set-output name=merged::${merged}"
 
       - name: Check merge status
-        if: steps.merge.outputs.merged == "true"
+        if: steps.merge.outputs.merged == 'true'
         run: echo "Pull request successfully merged!"
