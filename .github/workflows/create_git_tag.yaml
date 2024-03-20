@@ -48,3 +48,14 @@ jobs:
               # You can add additional waiting logic if needed
             fi
           done
+
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Auto Merge PR
+        uses: pascalgn/automerge-action@v0.12.0
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -70,7 +70,6 @@
              workspace: source
            - name: ssh-directory
              workspace: ssh-directory
-
    workspaces:
      - name: source
        volumeClaimTemplate:
