@@ -1,0 +1,50 @@
+name: Wait for pipelines to finish
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    branches:
+      - main
+    paths:
+      - '.tekton/create_git_tag.yaml'
+
+jobs:
+  wait_for_pipelines:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check if all other PR pipelines succeeded
+        id: check_pipelines
+        run: |
+          TOKEN=$(echo ${{ secrets.GITHUB_TOKEN }})
+          API_URL="https://api.github.com/repos/${{ github.repository }}/actions/runs"
+          
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+
+          while true; do
+            # Get all workflow runs for the current PR
+            RUNS=$(curl -s -X GET -G \
+              -H "Authorization: Bearer $TOKEN" \
+              -H "Accept: application/vnd.github.v3+json" \
+              -d "event=push" \
+              -d "branch=${{ github.event.pull_request.head.ref }}" \
+              "$API_URL")
+
+            # Check if any other run has failed
+            if echo "$RUNS" | jq -e '.workflow_runs[] | select(.id != '$GITHUB_RUN_ID' and .conclusion == "failure")' > /dev/null; then
+              echo "One of the other PR pipelines failed. Failing this workflow."
+              exit 1
+            fi
+
+            # Check if all runs are successful
+            if ! echo "$RUNS" | jq -e '.workflow_runs[] | select(.id != '$GITHUB_RUN_ID' and .conclusion != "success")' > /dev/null; then
+              echo "All other PR pipelines succeeded. Proceeding with the current workflow."
+              break
+            else
+              echo "Not all other PR pipelines succeeded. Waiting..."
+              sleep 60  # Adjust the sleep duration based on your needs
+              # You can add additional waiting logic if needed
+            fi
+          done

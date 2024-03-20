@@ -147,7 +147,7 @@ application:
 # Grafana dashboard
 #####################
   grafanaDashboard:
-    enabled: true
+    enabled: false
     contents:
       nordmart-review-statistics-dashboard:
         instanceSelector:
