@@ -76,6 +76,7 @@ jobs:
         if: steps.pr_checks.outputs.checks == 'success'
         run: |
           response=$(curl -s -X PUT -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/pulls/${{ steps.pr_details.outputs.pr_number }}/merge")
+          echo $response
           merged=$(echo $response | jq -r '.merged')
           echo "::set-output name=merged::${merged}"
 
