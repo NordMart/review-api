@@ -84,10 +84,3 @@ jobs:
           else
           echo "Failed to merge pull request. HTTP status code: $response"
           fi
-          echo $response
-          merged=$(echo $response | jq -r '.merged')
-          echo "::set-output name=merged::${merged}"
-
-      - name: Check merge status
-        if: steps.merge.outputs.merged == 'true'
-        run: echo "Pull request successfully merged!"
