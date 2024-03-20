@@ -83,3 +83,4 @@
      - name: ssh-directory
        secret:
          secretName: nordmart-api-ssh-creds
+# Test workflow run
