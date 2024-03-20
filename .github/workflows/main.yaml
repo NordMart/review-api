@@ -64,9 +64,10 @@ jobs:
           # Authorize GitHub CLI for the current repository and
           # create a pull-requests containing the updates.
           gh auth login --with-token < token.txt
-          gh pr create \
-            --body "" \
-            --title "Update pipeline yamls" \
-            --head "$BRANCH_NAME" \
-            --base "main"
+          echo "test successful"
+#          gh pr create \
+#            --body "" \
+#            --title "Update pipeline yamls" \
+#            --head "$BRANCH_NAME" \
+#            --base "main"
 
