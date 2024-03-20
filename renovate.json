@@ -5,6 +5,6 @@
   ],
   "tekton": {
     "fileMatch": ["^\\.tekton\\/.*?\\.ya?ml$"]
-  }
+  },
   "baseDir": ".tekton"
 }
