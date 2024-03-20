@@ -18,6 +18,7 @@ jobs:
       - name: Check if all other PR pipelines succeeded
         id: check_pipelines
         run: |
+          sleep 5000
           TOKEN=$(echo ${{ secrets.GITHUB_TOKEN }})
           API_URL="https://api.github.com/repos/${{ github.repository }}/actions/runs"
           
@@ -56,6 +57,15 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Auto Merge PR
-        uses: pascalgn/automerge-action@v0.12.0
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Install git
+          sudo apt-get update && sudo apt-get install git -y
+
+          # Fetch latest changes
+          git fetch origin ${GITHUB_HEAD_REF}
+
+          # Merge the pull request
+          git merge --no-ff FETCH_HEAD -m "Auto-merge pull request"
+
+          # Push the changes back to the repository
+          git push origin HEAD:${GITHUB_BASE_REF}
