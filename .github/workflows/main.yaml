@@ -21,27 +21,6 @@ jobs:
           repository: ${{github.event.pull_request.head.repo.full_name}}
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get changed files in .tekton directory
-        id: get_changed_files
-        run: |
-          changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep "^\.tekton/")
-          IFS=$'\n' read -rd '' -a files_array <<<"$changed_files"
-
-      - name: Process filenames
-        id: process_filenames
-        run: |
-          processed_files=()
-          for file in "${files_array[@]}"; do
-            # Remove file extension
-            file_name="${file%.*}"
-            # Replace underscores with hyphens
-            processed_file_name="${file_name//_/-}"
-            processed_files+=("$processed_file_name")
-          done
-
-      - name: Display processed filenames
-        run: echo "${processed_files[@]}"
-
       - name: Send pull-request
         run: |
           LATEST_TAG=$(git describe --tags --always --abbrev=0)
@@ -71,7 +50,7 @@ jobs:
 
           
           # Update Changelog
-          echo -e "Pipelines updated.\n${processed_files[@]}" >> CHANGELOG.md
+          echo -e "Pipelines updated.\n" >> CHANGELOG.md
 
           # Commit the changes and push the feature branch to origin
           git add .
