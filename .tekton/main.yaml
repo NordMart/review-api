@@ -19,7 +19,7 @@ metadata:
     https://raw.githubusercontent.com/stakater-tekton-catalog/rox-image-check/0.0.9/task/stakater-rox-image-check/stakater-rox-image-check.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/checkov-scan/0.0.4/task/stakater-checkov-scan/stakater-checkov-scan.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/helm-push/0.0.18/task/stakater-helm-push/stakater-helm-push.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/github-update-cd-repo/0.0.16/task/stakater-github-update-cd-repo/stakater-github-update-cd-repo.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/github-update-cd-repo/0.0.17/task/stakater-github-update-cd-repo/stakater-github-update-cd-repo.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/push-main-tag/0.0.12/task/stakater-push-main-tag/stakater-push-main-tag.yaml]"
     pipelinesascode.tekton.dev/max-keep-runs: "2"
 
