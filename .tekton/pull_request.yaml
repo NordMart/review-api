@@ -149,19 +149,19 @@ spec:
          - name: source
            workspace: source
 
-     # - name: sonarqube-scan
-     #   runAfter:
-     #     - unit-test
-     #   taskRef:
-     #     name: stakater-sonarqube-scan-java
-     #     kind: Task
-     #   params:
-     #     - name: SONAR_PROJECT_KEY
-     #       value: $(params.repo_path)
-     #     - name: SONAR_LOGIN
-     #   workspaces:
-     #     - name: source
-     #       workspace: source
+     - name: sonarqube-scan
+       runAfter:
+         - unit-test
+       taskRef:
+         name: stakater-sonarqube-scan-java
+         kind: Task
+       params:
+         - name: SONAR_PROJECT_KEY
+           value: $(params.repo_path)
+         - name: SONAR_LOGIN
+       workspaces:
+         - name: source
+           workspace: source
 
      - name: buildah
        runAfter:
