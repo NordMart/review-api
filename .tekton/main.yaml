@@ -11,7 +11,7 @@ metadata:
     https://raw.githubusercontent.com/stakater-tekton-catalog/code-linting-mvn/0.0.4/task/stakater-code-linting/stakater-code-linting.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/kube-linting/0.0.10/task/stakater-kube-linting/stakater-kube-linting.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/unit-test/0.0.6/task/stakater-unit-test/stakater-unit-test.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/sonarqube-scan-java/0.0.2/task/stakater-sonarqube-scan-java/stakater-sonarqube-scan-java.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/sonarqube-scan-java/0.0.3/task/stakater-sonarqube-scan-java/stakater-sonarqube-scan-java.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/buildah/0.0.37/task/stakater-buildah/stakater-buildah.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/trivy-scan/0.0.4/task/stakater-trivy-scan/stakater-trivy-scan.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/rox-image-scan/0.0.5/task/stakater-rox-image-scan/stakater-rox-image-scan.yaml,
