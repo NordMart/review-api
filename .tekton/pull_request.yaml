@@ -199,6 +199,18 @@ spec:
          - name: source
            workspace: source
 
+     - name: checkov-scan
+       runAfter:
+         - buildah
+         - sonarqube-scan
+       taskRef:
+         name: stakater-checkov-scan
+         kind: Task
+       workspaces:
+         - name: source
+           workspace: source
+
+           
      - name: rox-image-scan
        runAfter:
          - buildah
@@ -222,8 +234,9 @@ spec:
 
      - name: rox-image-check
        runAfter:
-         - buildah
-         - sonarqube-scan
+         - rox-image-scan
+         - trivy-scan
+         - checkov-scan
        taskRef:
          name: stakater-rox-image-check
          kind: Task
@@ -239,8 +252,7 @@ spec:
 
      - name: rox-deployment-check
        runAfter:
-         - buildah
-         - sonarqube-scan
+         - rox-image-check
        taskRef:
          name: stakater-rox-deployment-check
          kind: Task
@@ -257,24 +269,11 @@ spec:
          - name: source
            workspace: source
 
-     - name: checkov-scan
-       runAfter:
-         - buildah
-         - sonarqube-scan
-       taskRef:
-         name: stakater-checkov-scan
-         kind: Task
-       workspaces:
-         - name: source
-           workspace: source
+
 
      - name: helm-push
        runAfter:
-         - trivy-scan
          - rox-deployment-check
-         - rox-image-scan
-         - rox-image-check
-         - checkov-scan
        taskRef:
          name: stakater-helm-push
          kind: Task
