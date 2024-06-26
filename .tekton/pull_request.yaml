@@ -234,9 +234,8 @@ spec:
 
      - name: rox-image-check
        runAfter:
-         - rox-image-scan
-         - trivy-scan
-         - checkov-scan
+         - buildah
+         - sonarqube-scan
        taskRef:
          name: stakater-rox-image-check
          kind: Task
@@ -252,7 +251,8 @@ spec:
 
      - name: rox-deployment-check
        runAfter:
-         - rox-image-check
+         - buildah
+         - sonarqube-scan
        taskRef:
          name: stakater-rox-deployment-check
          kind: Task
@@ -273,7 +273,11 @@ spec:
 
      - name: helm-push
        runAfter:
+         - trivy-scan
          - rox-deployment-check
+         - rox-image-scan
+         - rox-image-check
+         - checkov-scan
        taskRef:
          name: stakater-helm-push
          kind: Task
