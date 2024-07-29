@@ -8,7 +8,7 @@ on:
     branches:
       - main
     paths:
-      - '.tekton/create_git_tag.yaml'
+      - '.tekton'
 
 jobs:
   wait_for_pipelines:
