@@ -3,7 +3,7 @@ kind: PipelineRun
 metadata:
   name: pullrequest-review-api
   annotations:
-    pipelinesascode.tekton.dev/on-event: "[pull_request]" # Trigger the pipelineRun on pull_request events on branch main
+    pipelinesascode.tekton.dev/on-event: "[]" # Trigger the pipelineRun on pull_request or main events
     pipelinesascode.tekton.dev/on-target-branch: "main"
     pipelinesascode.tekton.dev/task: "[git-clone,
     https://raw.githubusercontent.com/stakater-tekton-catalog/create-git-tag/0.0.12/task/stakater-create-git-tag/stakater-create-git-tag.yaml,
@@ -13,15 +13,7 @@ metadata:
     https://raw.githubusercontent.com/stakater-tekton-catalog/unit-test/0.0.6/task/stakater-unit-test/stakater-unit-test.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/sonarqube-scan/0.0.19/task/stakater-sonarqube-scan/stakater-sonarqube-scan.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/buildah-image-build/0.0.1/task/stakater-buildah-image-build/stakater-buildah-image-build.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/buildah-image-push/0.0.1/task/stakater-buildah-image-push/stakater-buildah-image-push.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/trivy-scan/0.0.4/task/stakater-trivy-scan/stakater-trivy-scan.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/rox-image-scan/0.0.5/task/stakater-rox-image-scan/stakater-rox-image-scan.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/rox-deployment-check/0.0.4/task/stakater-rox-deployment-check/stakater-rox-deployment-check.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/rox-image-check/0.0.9/task/stakater-rox-image-check/stakater-rox-image-check.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/checkov-scan/0.0.4/task/stakater-checkov-scan/stakater-checkov-scan.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/github-update-cd-repo/0.0.18/task/stakater-github-update-cd-repo/stakater-github-update-cd-repo.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/validate-environment/0.0.9/task/stakater-validate-environment/stakater-validate-environment.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/comment-on-pr/comment_route/helm/templates/task.yaml]" # The tasks will be fetched from Tekton Hub. We can also provide direct links to yaml files
+    https://raw.githubusercontent.com/stakater-tekton-catalog/buildah-image-push/0.0.1/task/stakater-buildah-image-push/stakater-buildah-image-push.yaml]" # The tasks will be fetched from Tekton Hub. We can also provide direct links to yaml files
     pipelinesascode.tekton.dev/max-keep-runs: "2" # Only remain 2 latest pipelineRuns on SAAP
 spec:
   params:
@@ -195,144 +187,6 @@ spec:
         workspaces:
           - name: source
             workspace: source
-      - name: trivy-scan
-        runAfter:
-          - buildah-image-push
-          - sonarqube-scan
-        taskRef:
-          name: stakater-trivy-scan
-          kind: Task
-        params:
-          - name: IMAGE_NAME
-            value: $(params.repo_path):$(tasks.create-git-tag.results.GIT_TAG)
-        workspaces:
-          - name: source
-            workspace: source      
-      - name: rox-image-scan
-        runAfter:
-          - buildah-image-push
-          - sonarqube-scan
-        taskRef:
-          name: stakater-rox-image-scan
-          kind: Task
-        params:
-        - name: IMAGE_NAME
-          value: '$(params.repo_path):$(tasks.create-git-tag.results.GIT_TAG)'
-        - name: ROX_API_TOKEN
-          value: rox-creds
-        - name: ROX_CENTRAL_ENDPOINT
-          value: rox-creds
-        - name: OUTPUT_FORMAT
-          value: csv
-        - name: IMAGE_DIGEST
-          value: $(tasks.buildah-image-push.results.IMAGE_DIGEST)
-        - name: BUILD_IMAGE
-          value: "true"
-      - name: rox-image-check
-        runAfter:
-          - buildah-image-push
-          - sonarqube-scan
-        taskRef:
-          name: stakater-rox-image-check
-          kind: Task
-        params:
-          - name: IMAGE_NAME
-            value: '$(params.repo_path):$(tasks.create-git-tag.results.GIT_TAG)'
-          - name: ROX_API_TOKEN
-            value: rox-creds
-          - name: ROX_CENTRAL_ENDPOINT
-            value: rox-creds
-          - name: BUILD_IMAGE
-            value: "true"
-      - name: rox-deployment-check
-        runAfter:
-          - buildah-image-push
-          - sonarqube-scan
-        taskRef:
-          name: stakater-rox-deployment-check
-          kind: Task
-        params:
-          - name: ROX_API_TOKEN
-            value: rox-creds
-          - name: ROX_CENTRAL_ENDPOINT
-            value: rox-creds
-          - name: FILE
-            value: manifest.yaml
-          - name: DEPLOYMENT_FILES_PATH
-            value: deploy
-        workspaces:
-          - name: source
-            workspace: source
-      - name: checkov-scan
-        runAfter:
-          - buildah-image-push
-          - sonarqube-scan
-        taskRef:
-          name: stakater-checkov-scan
-          kind: Task
-        workspaces:
-          - name: source
-            workspace: source      
-      - name: update-cd-repo
-        runAfter:
-          - trivy-scan
-          - rox-deployment-check
-          - rox-image-scan
-          - rox-image-check
-          - checkov-scan
-        taskRef:
-          kind: Task
-          name: stakater-github-update-cd-repo
-        params:
-          - name: IMAGE_TAG
-            value: $(tasks.create-git-tag.results.GIT_TAG)
-          - name: IMAGE_NAME
-            value: '$(params.repo_path)'
-          - name: PR_NUMBER
-            value: $(params.pull_request_number)
-          - name: REPO_PATH
-            value: $(params.repo_path)
-          - name: GIT_REVISION
-            value: $(params.git_revision)
-          - name: ENVIRONMENT
-            value: dev
-        workspaces:
-          - name: source
-            workspace: source
-          - name: ssh-directory
-            workspace: ssh-directory
-      - name: validate-environment
-        runAfter:
-          - update-cd-repo
-        taskRef:
-          kind: Task
-          name: stakater-validate-environment
-        params:
-          - name: TIMEOUT
-            value: "300"
-          - name: PR_NUMBER
-            value: $(params.pull_request_number)
-        workspaces:
-          - name: source
-            workspace: source
-      - name: comment-on-pr
-        runAfter:
-          - validate-environment
-        taskRef:
-          kind: Task
-          name: stakater-comment-on-pr
-        params:
-          - name: IMAGE_NAME
-            value: $(params.repo_path):$(tasks.create-git-tag.results.GIT_TAG)
-          - name: PR_NUMBER
-            value: $(params.pull_request_number)
-          - name: REPO_NAME
-            value: "$(params.organization)/$(params.repo_name)"
-        workspaces:
-          - name: source
-            workspace: source
-          - name: repo-token
-            workspace: repo-token
   workspaces: # Mention Workspaces configuration
     - name: source
       volumeClaimTemplate:
