@@ -8,7 +8,14 @@ metadata:
     pipelinesascode.tekton.dev/task: "[git-clone,
     https://raw.githubusercontent.com/stakater-tekton-catalog/create-git-tag/0.0.12/task/stakater-create-git-tag/stakater-create-git-tag.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/create-environment/0.0.18/task/stakater-create-environment/stakater-create-environment.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/code-linting-mvn/0.0.4/task/stakater-code-linting/stakater-code-linting.yaml]" # The tasks will be fetched from Tekton Hub. We can also provide direct links to yaml files
+    https://raw.githubusercontent.com/stakater-tekton-catalog/code-linting-mvn/0.0.4/task/stakater-code-linting/stakater-code-linting.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/kube-linting/0.0.10/task/stakater-kube-linting/stakater-kube-linting.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/unit-test/0.0.6/task/stakater-unit-test/stakater-unit-test.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/sonarqube-scan/0.0.19/task/stakater-sonarqube-scan/stakater-sonarqube-scan.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/buildah-image-build/0.0.1/task/stakater-buildah-image-build/stakater-buildah-image-build.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/buildah-image-push/0.0.1/task/stakater-buildah-image-push/stakater-buildah-image-push.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/trivy-scan/0.0.4/task/stakater-trivy-scan/stakater-trivy-scan.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/rox-image-scan/0.0.5/task/stakater-rox-image-scan/stakater-rox-image-scan.yaml]" # The tasks will be fetched from Tekton Hub. We can also provide direct links to yaml files
     pipelinesascode.tekton.dev/max-keep-runs: "2" # Only remain 2 latest pipelineRuns on SAAP
 spec:
   params:
@@ -106,6 +113,115 @@ spec:
         workspaces:
           - name: source
             workspace: source
+      - name: kube-linting
+        runAfter:
+          - create-environment
+        taskRef:
+          name: stakater-kube-linting
+          kind: Task
+        params:
+          - name: FILE
+            value: manifest.yaml
+          - name: DEPLOYMENT_FILES_PATH
+            value: deploy
+          - name: NAMESPACE
+            value: arsenal-build
+        workspaces:
+          - name: source
+            workspace: source
+      - name: unit-test
+        runAfter:
+          - code-linting
+          - kube-linting
+        taskRef:
+          name: stakater-unit-test
+          kind: Task
+        workspaces:
+          - name: source
+            workspace: source
+      - name: sonarqube-scan
+        runAfter:
+          - unit-test
+        taskRef:
+          name: stakater-sonarqube-scan
+          kind: Task
+        params:
+          - name: SONAR_PROJECT_KEY
+            value: $(params.repo_path)
+        workspaces:
+          - name: source
+            workspace: source
+      - name: buildah-image-build
+        runAfter:
+          - unit-test
+        taskRef:
+          name: stakater-buildah-image-build
+          kind: Task
+        params:
+          - name: IMAGE_NAME
+            value: $(params.repo_path):$(tasks.create-git-tag.results.GIT_TAG)
+          - name: TLSVERIFY
+            value: "false"
+          - name: FORMAT
+            value: "docker"
+          - name: CURRENT_GIT_TAG
+            value: $(tasks.create-git-tag.results.CURRENT_GIT_TAG)
+          - name: REPO_NAME
+            value: $(params.repo_path)
+        workspaces:
+          - name: source
+            workspace: source      
+      - name: buildah-image-push
+        runAfter:
+          - buildah-image-build
+        taskRef:
+          name: stakater-buildah-image-push
+          kind: Task
+        params:
+          - name: IMAGE_NAME
+            value: $(params.repo_path):$(tasks.create-git-tag.results.GIT_TAG)
+          - name: TLSVERIFY
+            value: "false"
+          - name: CURRENT_GIT_TAG
+            value: $(tasks.create-git-tag.results.CURRENT_GIT_TAG)
+          - name: REPO_NAME
+            value: $(params.repo_path)
+        workspaces:
+          - name: source
+            workspace: source
+      - name: trivy-scan
+        runAfter:
+          - buildah-image-push
+          - sonarqube-scan
+        taskRef:
+          name: stakater-trivy-scan
+          kind: Task
+        params:
+          - name: IMAGE_NAME
+            value: $(params.repo_path):$(tasks.create-git-tag.results.GIT_TAG)
+        workspaces:
+          - name: source
+            workspace: source      
+      - name: rox-image-scan
+        runAfter:
+          - buildah-image-push
+          - sonarqube-scan
+        taskRef:
+          name: stakater-rox-image-scan
+          kind: Task
+        params:
+        - name: IMAGE_NAME
+          value: '$(params.repo_path):$(tasks.create-git-tag.results.GIT_TAG)'
+        - name: ROX_API_TOKEN
+          value: rox-creds
+        - name: ROX_CENTRAL_ENDPOINT
+          value: rox-creds
+        - name: OUTPUT_FORMAT
+          value: csv
+        - name: IMAGE_DIGEST
+          value: $(tasks.buildah-image-push.results.IMAGE_DIGEST)
+        - name: BUILD_IMAGE
+          value: "true"
   workspaces: # Mention Workspaces configuration
     - name: source
       volumeClaimTemplate:
