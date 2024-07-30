@@ -16,12 +16,10 @@ metadata:
     https://raw.githubusercontent.com/stakater-tekton-catalog/buildah-image-push/0.0.1/task/stakater-buildah-image-push/stakater-buildah-image-push.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/trivy-scan/0.0.4/task/stakater-trivy-scan/stakater-trivy-scan.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/rox-image-scan/0.0.5/task/stakater-rox-image-scan/stakater-rox-image-scan.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/rox-deployment-check/0.0.4/task/stakater-rox-deployment-check/stakater-rox-deployment-check.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/rox-image-check/0.0.9/task/stakater-rox-image-check/stakater-rox-image-check.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/rox-deployment-check/0.0.4/task/stakater-rox-deployment-check/stakater-rox-deployment-check.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/checkov-scan/0.0.4/task/stakater-checkov-scan/stakater-checkov-scan.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/github-update-cd-repo/0.0.18/task/stakater-github-update-cd-repo/stakater-github-update-cd-repo.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/validate-environment/0.0.9/task/stakater-validate-environment/stakater-validate-environment.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/comment-on-pr/comment_route/helm/templates/task.yaml]" # The tasks will be fetched from Tekton Hub. We can also provide direct links to yaml files
+    https://raw.githubusercontent.com/stakater-tekton-catalog/github-update-cd-repo/0.0.18/task/stakater-github-update-cd-repo/stakater-github-update-cd-repo.yaml]" # The tasks will be fetched from Tekton Hub. We can also provide direct links to yaml files
     pipelinesascode.tekton.dev/max-keep-runs: "2" # Only remain 2 latest pipelineRuns on SAAP
 spec:
   params:
@@ -32,7 +30,7 @@ spec:
     - name: repo_name
       value: {{repo_name}} # Dynamic varaible to fetch repo name
     - name: repo_path
-      value: "review-api"
+      value: "review-api" # Dynamic varaible for app name
     - name: git_branch
       value: {{source_branch}}
     - name: pull_request_number
@@ -301,38 +299,6 @@ spec:
             workspace: source
           - name: ssh-directory
             workspace: ssh-directory
-      - name: validate-environment
-        runAfter:
-          - update-cd-repo
-        taskRef:
-          kind: Task
-          name: stakater-validate-environment
-        params:
-          - name: TIMEOUT
-            value: "300"
-          - name: PR_NUMBER
-            value: $(params.pull_request_number)
-        workspaces:
-          - name: source
-            workspace: source
-      - name: comment-on-pr
-        runAfter:
-          - validate-environment
-        taskRef:
-          kind: Task
-          name: stakater-comment-on-pr
-        params:
-          - name: IMAGE_NAME
-            value: $(params.repo_path):$(tasks.create-git-tag.results.GIT_TAG)
-          - name: PR_NUMBER
-            value: $(params.pull_request_number)
-          - name: REPO_NAME
-            value: "$(params.organization)/$(params.repo_name)"
-        workspaces:
-          - name: source
-            workspace: source
-          - name: repo-token
-            workspace: repo-token
   workspaces: # Mention Workspaces configuration
     - name: source
       volumeClaimTemplate:

@@ -9,10 +9,7 @@ metadata:
     https://raw.githubusercontent.com/stakater-tekton-catalog/create-git-tag/0.0.12/task/stakater-create-git-tag/stakater-create-git-tag.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/create-environment/0.0.18/task/stakater-create-environment/stakater-create-environment.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/code-linting-mvn/0.0.4/task/stakater-code-linting/stakater-code-linting.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/kube-linting/0.0.10/task/stakater-kube-linting/stakater-kube-linting.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/unit-test/0.0.6/task/stakater-unit-test/stakater-unit-test.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/sonarqube-scan/0.0.19/task/stakater-sonarqube-scan/stakater-sonarqube-scan.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/buildah-image-build/0.0.1/task/stakater-buildah-image-build/stakater-buildah-image-build.yaml]" # The tasks will be fetched from Tekton Hub. We can also provide direct links to yaml files
+    https://raw.githubusercontent.com/stakater-tekton-catalog/kube-linting/0.0.10/task/stakater-kube-linting/stakater-kube-linting.yaml]" # The tasks will be fetched from Tekton Hub. We can also provide direct links to yaml files
     pipelinesascode.tekton.dev/max-keep-runs: "2" # Only remain 2 latest pipelineRuns on SAAP
 spec:
   params:
@@ -23,7 +20,7 @@ spec:
     - name: repo_name
       value: {{repo_name}} # Dynamic varaible to fetch repo name
     - name: repo_path
-      value: "review-api"
+      value: "review-api" # Dynamic varaible for app name
     - name: git_branch
       value: {{source_branch}}
     - name: pull_request_number
@@ -126,48 +123,6 @@ spec:
         workspaces:
           - name: source
             workspace: source
-      - name: unit-test
-        runAfter:
-          - code-linting
-          - kube-linting
-        taskRef:
-          name: stakater-unit-test
-          kind: Task
-        workspaces:
-          - name: source
-            workspace: source
-      - name: sonarqube-scan
-        runAfter:
-          - unit-test
-        taskRef:
-          name: stakater-sonarqube-scan
-          kind: Task
-        params:
-          - name: SONAR_PROJECT_KEY
-            value: $(params.repo_path)
-        workspaces:
-          - name: source
-            workspace: source
-      - name: buildah-image-build
-        runAfter:
-          - unit-test
-        taskRef:
-          name: stakater-buildah-image-build
-          kind: Task
-        params:
-          - name: IMAGE_NAME
-            value: $(params.repo_path):$(tasks.create-git-tag.results.GIT_TAG)
-          - name: TLSVERIFY
-            value: "false"
-          - name: FORMAT
-            value: "docker"
-          - name: CURRENT_GIT_TAG
-            value: $(tasks.create-git-tag.results.CURRENT_GIT_TAG)
-          - name: REPO_NAME
-            value: $(params.repo_path)
-        workspaces:
-          - name: source
-            workspace: source      
   workspaces: # Mention Workspaces configuration
     - name: source
       volumeClaimTemplate:

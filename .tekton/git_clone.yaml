@@ -17,7 +17,7 @@ spec:
     - name: repo_name
       value: {{repo_name}} # Dynamic varaible to fetch repo name
     - name: repo_path
-      value: "review-api"
+      value: "review-api" # Dynamic varaible for app name
     - name: git_branch
       value: {{source_branch}}
     - name: pull_request_number

@@ -6,8 +6,7 @@ metadata:
     pipelinesascode.tekton.dev/on-event: "[]" # Trigger the pipelineRun on pull_request or main events
     pipelinesascode.tekton.dev/on-target-branch: "main"
     pipelinesascode.tekton.dev/task: "[git-clone,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/create-git-tag/0.0.12/task/stakater-create-git-tag/stakater-create-git-tag.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/create-environment/0.0.18/task/stakater-create-environment/stakater-create-environment.yaml]" # The tasks will be fetched from Tekton Hub. We can also provide direct links to yaml files
+    https://raw.githubusercontent.com/stakater-tekton-catalog/create-git-tag/0.0.12/task/stakater-create-git-tag/stakater-create-git-tag.yaml]" # The tasks will be fetched from Tekton Hub. We can also provide direct links to yaml files
     pipelinesascode.tekton.dev/max-keep-runs: "2" # Only remain 2 latest pipelineRuns on SAAP
 spec:
   params:
@@ -18,7 +17,7 @@ spec:
     - name: repo_name
       value: {{repo_name}} # Dynamic varaible to fetch repo name
     - name: repo_path
-      value: "review-api"
+      value: "review-api" # Dynamic varaible for app name
     - name: git_branch
       value: {{source_branch}}
     - name: pull_request_number
