@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  name: pullrequest-review-api
+  name: comment-on-pr
   annotations:
     pipelinesascode.tekton.dev/on-event: "[]" # Trigger the pipelineRun on pull_request or main events
     pipelinesascode.tekton.dev/on-target-branch: "main"
