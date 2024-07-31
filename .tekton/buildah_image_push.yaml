@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  name: pullrequest-review-api
+  name: image-push
   annotations:
     pipelinesascode.tekton.dev/on-event: "[]" # Trigger the pipelineRun on pull_request or main events
     pipelinesascode.tekton.dev/on-target-branch: "main"
@@ -12,7 +12,8 @@ metadata:
     https://raw.githubusercontent.com/stakater-tekton-catalog/kube-linting/0.0.10/task/stakater-kube-linting/stakater-kube-linting.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/unit-test/0.0.6/task/stakater-unit-test/stakater-unit-test.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/sonarqube-scan/0.0.19/task/stakater-sonarqube-scan/stakater-sonarqube-scan.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/buildah-image-build/0.0.1/task/stakater-buildah-image-build/stakater-buildah-image-build.yaml]" # The tasks will be fetched from Tekton Hub. We can also provide direct links to yaml files
+    https://raw.githubusercontent.com/stakater-tekton-catalog/buildah-image-build/0.0.1/task/stakater-buildah-image-build/stakater-buildah-image-build.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/buildah-image-push/0.0.1/task/stakater-buildah-image-push/stakater-buildah-image-push.yaml]" # The tasks will be fetched from Tekton Hub. We can also provide direct links to yaml files
     pipelinesascode.tekton.dev/max-keep-runs: "2" # Only remain 2 latest pipelineRuns on SAAP
 spec:
   params:
@@ -168,6 +169,24 @@ spec:
         workspaces:
           - name: source
             workspace: source      
+      - name: buildah-image-push
+        runAfter:
+          - buildah-image-build
+        taskRef:
+          name: stakater-buildah-image-push
+          kind: Task
+        params:
+          - name: IMAGE_NAME
+            value: $(params.repo_path):$(tasks.create-git-tag.results.GIT_TAG)
+          - name: TLSVERIFY
+            value: "false"
+          - name: CURRENT_GIT_TAG
+            value: $(tasks.create-git-tag.results.CURRENT_GIT_TAG)
+          - name: REPO_NAME
+            value: $(params.repo_path)
+        workspaces:
+          - name: source
+            workspace: source
   workspaces: # Mention Workspaces configuration
     - name: source
       volumeClaimTemplate:
