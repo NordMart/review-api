@@ -4,7 +4,7 @@ metadata:
   name: git-clone
   annotations:
     # pipelinesascode.tekton.dev/on-event: "[]" # Trigger the pipelineRun on pull_request or main events
-    pipelinesascode.tekton.dev/on-target-branch: ""
+    pipelinesascode.tekton.dev/on-target-branch: "main"
     pipelinesascode.tekton.dev/task: "[git-clone]" # The tasks will be fetched from Tekton Hub. We can also provide direct links to yaml files
     pipelinesascode.tekton.dev/max-keep-runs: "2" # Only remain 2 latest pipelineRuns on SAAP
 spec:
