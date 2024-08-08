@@ -1,40 +1,38 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  name: main
+  name: main # pipelineRun name
   annotations:
-    pipelinesascode.tekton.dev/on-event: "[push]"
+    pipelinesascode.tekton.dev/on-event: "[push]" # Trigger the pipelineRun on push events on branch main
     pipelinesascode.tekton.dev/on-target-branch: "main"
     pipelinesascode.tekton.dev/task: "[git-clone, 
     https://raw.githubusercontent.com/stakater-tekton-catalog/create-git-tag/0.0.12/task/stakater-create-git-tag/stakater-create-git-tag.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/create-environment/0.0.18/task/stakater-create-environment/stakater-create-environment.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/code-linting-mvn/0.0.4/task/stakater-code-linting/stakater-code-linting.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/kube-linting/0.0.10/task/stakater-kube-linting/stakater-kube-linting.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/unit-test/0.0.6/task/stakater-unit-test/stakater-unit-test.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/sonarqube-scan-java/0.0.3/task/stakater-sonarqube-scan-java/stakater-sonarqube-scan-java.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/buildah/0.0.37/task/stakater-buildah/stakater-buildah.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/trivy-scan/0.0.4/task/stakater-trivy-scan/stakater-trivy-scan.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/rox-image-scan/0.0.5/task/stakater-rox-image-scan/stakater-rox-image-scan.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/rox-deployment-check/0.0.4/task/stakater-rox-deployment-check/stakater-rox-deployment-check.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/rox-image-check/0.0.9/task/stakater-rox-image-check/stakater-rox-image-check.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/checkov-scan/0.0.4/task/stakater-checkov-scan/stakater-checkov-scan.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/helm-push/0.0.18/task/stakater-helm-push/stakater-helm-push.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/github-update-cd-repo/0.0.18/task/stakater-github-update-cd-repo/stakater-github-update-cd-repo.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/push-main-tag/0.0.12/task/stakater-push-main-tag/stakater-push-main-tag.yaml]"
-    pipelinesascode.tekton.dev/max-keep-runs: "2"
-
+    https://raw.githubusercontent.com/stakater-tekton-catalog/push-main-tag/0.0.12/task/stakater-push-main-tag/stakater-push-main-tag.yaml]" # The task will be fetched from Tekton Hub. We can also provide direct links to yaml files
+    pipelinesascode.tekton.dev/max-keep-runs: "2" # Only remain 2 latest pipelineRuns on SAAP
 spec:
   params:
     - name: repo_url
       value: {{body.repository.ssh_url}}
     - name: git_revision
       value: {{revision}}
+    - name: repo_name
+      value: {{repo_name}} # Dynamic varaible to fetch repo name
     - name: repo_path
-      value: {{repo_name}}
+      value: "review-api"
     - name: git_branch
       value: {{source_branch}}
     - name: organization
-      value: {{body.repository.owner.name}}
+      value: {{body.organization.login}}
+    - name: pr_commit_sha
+      value: {{body.after}}
   pipelineSpec:
     params:
       - name: repo_url
@@ -45,7 +43,6 @@ spec:
     workspaces:
       - name: source
       - name: ssh-directory
-
     tasks:
       - name: fetch-repository
         taskRef:
@@ -63,7 +60,6 @@ spec:
             value: $(params.repo_url)
           - name: revision
             value: $(params.git_revision)
-
       - name: create-git-tag
         runAfter:
           - fetch-repository
@@ -80,7 +76,6 @@ spec:
             workspace: source
           - name: ssh-directory
             workspace: ssh-directory
-
       - name: code-linting
         runAfter:
           - create-git-tag
@@ -90,7 +85,6 @@ spec:
         workspaces:
           - name: source
             workspace: source
-
       - name: kube-linting
         runAfter:
           - create-git-tag
@@ -102,11 +96,9 @@ spec:
             value: manifest.yaml
           - name: DEPLOYMENT_FILES_PATH
             value: deploy
-
         workspaces:
           - name: source
             workspace: source
-
       - name: unit-test
         runAfter:
           - code-linting
@@ -117,7 +109,6 @@ spec:
         workspaces:
           - name: source
             workspace: source
-
       - name: buildah
         runAfter:
           - unit-test
@@ -140,11 +131,9 @@ spec:
         workspaces:
           - name: source
             workspace: source
-
       - name: trivy-scan
         runAfter:
           - buildah
-
         taskRef:
           name: stakater-trivy-scan
           kind: Task
@@ -154,18 +143,15 @@ spec:
         workspaces:
           - name: source
             workspace: source
-
       - name: checkov-scan
         runAfter:
           - buildah
-
         taskRef:
           name: stakater-checkov-scan
           kind: Task
         workspaces:
           - name: source
             workspace: source
-
       - name: helm-push
         runAfter:
           - trivy-scan
@@ -192,6 +178,8 @@ spec:
           kind: Task
           name: stakater-github-update-cd-repo
         params:
+          - name: PULL_REQUEST_COMMITS_API # Replace when not using Git
+            value: https://api.github.com/repos/$(params.organization)/$(params.repo_name)/commits/$(params.pr_commit_sha)/pulls
           - name: IMAGE_TAG
             value: $(tasks.create-git-tag.results.GIT_TAG)
           - name: IMAGE_NAME
@@ -202,18 +190,15 @@ spec:
             value: $(params.repo_path)
           - name: GIT_REVISION
             value: main
-          - name: NAMESPACE
-            value: arsenal-dev
           - name: ENVIRONMENT
             value: dev
-          - name: HELM_REGISTRY
-            value: 'NA'
         workspaces:
           - name: source
             workspace: source
           - name: ssh-directory
             workspace: cd-ssh-creds
-
+          - name: repo-token
+            workspace: repo-token
       - name: push-main-tag
         runAfter:
           - update-cd-repo
@@ -232,7 +217,6 @@ spec:
             workspace: source
           - name: ssh-directory
             workspace: ssh-directory
-
   workspaces:
     - name: source
       volumeClaimTemplate:
@@ -241,10 +225,13 @@ spec:
             - ReadWriteOnce
           resources:
             requests:
-              storage: 1Gi
+              storage: 2Gi
     - name: ssh-directory
       secret:
-        secretName: nordmart-api-ssh-creds
+        secretName: git-ssh-creds
+    - name: repo-token
+      secret:
+        secretName: git-pat-creds
     - name: cd-ssh-creds
       secret:
-        secretName: cd-ssh-creds
+        secretName: git-ssh-creds
