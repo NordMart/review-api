@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  name: pullrequest-review-api
+  name: helm-push
   annotations:
     pipelinesascode.tekton.dev/on-event: "[pull_request]" # Trigger the pipelineRun on pull_request events on branch main
     pipelinesascode.tekton.dev/on-target-branch: "main"
