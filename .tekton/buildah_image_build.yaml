@@ -11,7 +11,7 @@ metadata:
     https://raw.githubusercontent.com/stakater-tekton-catalog/code-linting-mvn/0.0.4/task/stakater-code-linting/stakater-code-linting.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/kube-linting/0.0.10/task/stakater-kube-linting/stakater-kube-linting.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/unit-test/0.0.6/task/stakater-unit-test/stakater-unit-test.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/sonarqube-scan/0.0.22/task/stakater-sonarqube-scan/stakater-sonarqube-scan.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/sonarqube-scan-java/0.0.3/task/stakater-sonarqube-scan-java/stakater-sonarqube-scan-java.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/buildah-image-build/0.0.1/task/stakater-buildah-image-build/stakater-buildah-image-build.yaml]" # The tasks will be fetched from Tekton Hub. We can also provide direct links to yaml files
     pipelinesascode.tekton.dev/max-keep-runs: "2" # Only remain 2 latest pipelineRuns on SAAP
 spec:
@@ -138,7 +138,7 @@ spec:
         runAfter:
           - unit-test
         taskRef:
-          name: stakater-sonarqube-scan
+          name: stakater-sonarqube-scan-java
           kind: Task
         params:
           - name: SONAR_PROJECT_KEY
