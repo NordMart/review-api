@@ -14,7 +14,7 @@ metadata:
     https://raw.githubusercontent.com/stakater-tekton-catalog/sonarqube-scan/0.0.22/task/stakater-sonarqube-scan/stakater-sonarqube-scan.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/buildah-image-build/0.0.1/task/stakater-buildah-image-build/stakater-buildah-image-build.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/buildah-image-push/0.0.1/task/stakater-buildah-image-push/stakater-buildah-image-push.yaml,
-    https://raw.githubusercontent.com/stakater-tekton-catalog/trivy-scan/0.0.4/task/stakater-trivy-scan/stakater-trivy-scan.yaml,
+    https://raw.githubusercontent.com/stakater-tekton-catalog/trivy-scan/0.0.5/task/stakater-trivy-scan/stakater-trivy-scan.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/rox-image-scan/0.0.5/task/stakater-rox-image-scan/stakater-rox-image-scan.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/rox-image-check/0.0.9/task/stakater-rox-image-check/stakater-rox-image-check.yaml,
     https://raw.githubusercontent.com/stakater-tekton-catalog/rox-deployment-check/0.0.4/task/stakater-rox-deployment-check/stakater-rox-deployment-check.yaml,
