@@ -3,7 +3,7 @@ kind: PipelineRun
 metadata:
   name: rox-deployment-check
   annotations:
-    # pipelinesascode.tekton.dev/on-event: "[pull_request]" # Trigger the pipelineRun on pull_request events on branch main
+    pipelinesascode.tekton.dev/on-event: "[pull_request]" # Trigger the pipelineRun on pull_request events on branch main
     pipelinesascode.tekton.dev/on-target-branch: "main"
     pipelinesascode.tekton.dev/task: "[git-clone,
     https://raw.githubusercontent.com/stakater-tekton-catalog/create-git-tag/0.0.12/task/stakater-create-git-tag/stakater-create-git-tag.yaml,
@@ -22,19 +22,19 @@ metadata:
 spec:
   params:
     - name: repo_url
-      value: {{body.repository.ssh_url}} # Place your repo SSH URL
+      value: "{{body.repository.ssh_url}}" # Place your repo SSH URL
     - name: git_revision
-      value: {{revision}} # Dynamic variable to fetch branch name of the push event on your repo
+      value: "{{revision}}" # Dynamic variable to fetch branch name of the push event on your repo
     - name: repo_name
-      value: {{repo_name}} # Dynamic varaible to fetch repo name
+      value: "{{repo_name}}" # Dynamic varaible to fetch repo name
     - name: repo_path
       value: "review-api" # Dynamic varaible for app name
     - name: git_branch
-      value: {{source_branch}}
+      value: "{{source_branch}}"
     - name: pull_request_number
-      value: {{pull_request_number}}
+      value: "{{pull_request_number}}"
     - name: organization
-      value: {{body.organization.login}}
+      value: "{{body.organization.login}}"
   pipelineSpec: # Define what parameters will be used for pipeline
     params:
       - name: repo_url
