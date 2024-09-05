@@ -85,6 +85,19 @@ application:
             labels:
               severity: critical
 
+  ## autoscaling is used for horizonal pod autoscaling
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 5
+    metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60
+
   ## ConfigMap
   configMap:
     enabled: true
@@ -122,9 +135,7 @@ application:
     additionalConfig:
       uptimeRobotConfig:
         alertContacts: "3514554"
-        keywordExists: 'yes'
-        keywordValue: '404'
-        monitorType: keyword
+        monitorType: http
 
   externalSecret:
     enabled: true
